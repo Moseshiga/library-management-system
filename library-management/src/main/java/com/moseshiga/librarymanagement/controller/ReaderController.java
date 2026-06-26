@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/readers")
+@RequestMapping("/api/readers")
 @RequiredArgsConstructor
 public class ReaderController {
     private final ReaderService readerService;

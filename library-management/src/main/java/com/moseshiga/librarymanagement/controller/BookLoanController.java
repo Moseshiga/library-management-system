@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/readers")
+@RequestMapping("/api/loans")
 @RequiredArgsConstructor
 public class BookLoanController {
     private final BookLoanService bookLoanService;
@@ -29,12 +29,22 @@ public class BookLoanController {
         return new ResponseEntity<>(loan, HttpStatus.CREATED);
     }
 
-    @PostMapping("/return/{loanId}")
+    @PostMapping("{id}/return")
     public ResponseEntity<BookLoanDto> returnBook(
-            @PathVariable Long loanId
+            @PathVariable Long id
     ) {
-        BookLoanDto loan = bookLoanService.returnBook(loanId);
+        BookLoanDto loan = bookLoanService.returnBook(id);
         return ResponseEntity.ok(loan);
+    }
+
+    @GetMapping("/reader/{readerId}")
+    public ResponseEntity<List<BookLoanDto>> getReaderHistory(@PathVariable Long readerId) {
+        return ResponseEntity.ok(bookLoanService.getLoansByReaderId(readerId));
+    }
+
+    @GetMapping("/overdue")
+    public ResponseEntity<List<BookLoanDto>> getOverdueLoans() {
+        return ResponseEntity.ok(bookLoanService.getOverdueLoans());
     }
 
     @GetMapping

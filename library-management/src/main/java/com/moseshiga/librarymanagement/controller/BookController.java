@@ -12,12 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/books")
+@RequestMapping("/api/books")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
@@ -50,5 +51,12 @@ public class BookController {
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BookDto>> searchBooks(
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) String author) {
+        return ResponseEntity.ok(bookService.searchBooks(title, author));
     }
 }

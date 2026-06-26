@@ -79,6 +79,21 @@ public class BookLoanServiceImpl implements BookLoanService {
                 .toList();
     }
 
+    @Override
+    public List<BookLoanDto> getLoansByReaderId(Long readerId) {
+        return bookLoanRepository.findByReaderId(readerId).stream()
+                .map(this::getBookLoanDto)
+                .toList();
+    }
+
+    @Override
+    public List<BookLoanDto> getOverdueLoans() {
+        return bookLoanRepository.findByStatusAndDueDateBefore(LoanStatus.ACTIVE, LocalDate.now())
+                .stream()
+                .map(this::getBookLoanDto)
+                .toList();
+    }
+
     private BookLoanDto getBookLoanDto(BookLoan bookLoan) {
         return new BookLoanDto(
                 bookLoan.getId(),

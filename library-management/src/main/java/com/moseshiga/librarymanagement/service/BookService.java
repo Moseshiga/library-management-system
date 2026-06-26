@@ -10,4 +10,5 @@ public interface BookService {
     List<BookDto> getAllBooks();
     BookDto updateBook(Long id, BookDto bookDto);
     void deleteBook(Long id);
+    List<BookDto> searchBooks(String title, String author);
 }
