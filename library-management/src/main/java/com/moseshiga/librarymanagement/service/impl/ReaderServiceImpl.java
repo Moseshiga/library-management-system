@@ -2,6 +2,7 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.ReaderDto;
 import com.moseshiga.librarymanagement.entity.Reader;
+import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.ReaderService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public ReaderDto getReaderById(Long id) {
         Reader reader = readerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reader is not found by id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + id));
         return getReaderDto(reader);
     }
 
@@ -47,7 +48,7 @@ public class ReaderServiceImpl implements ReaderService {
     @Override
     public ReaderDto updateReader(Long id, ReaderDto readerDto) {
         Reader reader = readerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Reader is not found by id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + id));
         reader.setFirstName(readerDto.firstName());
         reader.setLastName(readerDto.lastName());
         reader.setEmail(readerDto.email());

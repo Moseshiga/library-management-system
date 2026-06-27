@@ -2,6 +2,7 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.entity.Book;
+import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto getBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book is not found by id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + id));
         return getBookDto(book);
     }
 
@@ -46,7 +47,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto updateBook(Long id, BookDto bookDto) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book is not found by id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + id));
 
         book.setTitle(bookDto.title());
         book.setAuthor(bookDto.author());

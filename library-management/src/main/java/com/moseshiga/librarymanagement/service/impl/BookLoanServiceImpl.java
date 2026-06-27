@@ -5,6 +5,8 @@ import com.moseshiga.librarymanagement.entity.Book;
 import com.moseshiga.librarymanagement.entity.BookLoan;
 import com.moseshiga.librarymanagement.entity.LoanStatus;
 import com.moseshiga.librarymanagement.entity.Reader;
+import com.moseshiga.librarymanagement.exeption.ConflictException;
+import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
@@ -29,11 +31,11 @@ public class BookLoanServiceImpl implements BookLoanService {
     @Transactional
     public BookLoanDto borrowBook(Long bookId, Long readerId) {
         Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new RuntimeException("Book is not found by id: " + bookId));
+                .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + bookId));
         Reader reader = readerRepository.findById(readerId)
-                .orElseThrow(() -> new RuntimeException("Reader is not found by id: " + readerId));
+                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + readerId));
         if (book.getAvailableCopies() == 0) {
-            throw new RuntimeException("No available copies for book id: " + bookId);
+            throw new ConflictException("No available copies for book id: " + bookId);
         }
 
         book.setAvailableCopies(book.getAvailableCopies() - 1);
@@ -55,10 +57,10 @@ public class BookLoanServiceImpl implements BookLoanService {
     @Transactional
     public BookLoanDto returnBook(Long loanId) {
         BookLoan bookLoan = bookLoanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException("Loan record not found with id: " + loanId));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan record not found with id: " + loanId));
 
         if (bookLoan.getStatus() == LoanStatus.RETURNED) {
-            throw new RuntimeException("Book is already returned for loan id: " + loanId);
+            throw new ConflictException("Book is already returned for loan id: " + loanId);
         }
 
         bookLoan.setReturnDate(LocalDate.now());
