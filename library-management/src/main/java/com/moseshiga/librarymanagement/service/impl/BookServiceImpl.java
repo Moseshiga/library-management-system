@@ -2,6 +2,7 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.entity.Book;
+import com.moseshiga.librarymanagement.exeption.ConflictException;
 import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.service.BookService;
@@ -20,14 +21,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookDto createBook(BookDto bookDto) {
-        Book book = Book.builder()
-                .title(bookDto.title())
-                .author(bookDto.author())
-                .isbn(bookDto.isbn())
-                .publicationYear(bookDto.publicationYear())
-                .totalCopies(bookDto.totalCopies())
-                .availableCopies(bookDto.availableCopies())
-                .build();
+        if (bookRepository.findByIsbn(bookDto.isbn()).isPresent()) {
+            throw new ConflictException("Book with ISBN " + bookDto.isbn() + " already exists in the catalog.");
+        }
+        Book book = mapToEntity(bookDto);
         Book savedBook = bookRepository.save(book);
         return getBookDto(savedBook);
     }
@@ -43,6 +40,13 @@ public class BookServiceImpl implements BookService {
     public BookDto updateBook(Long id, BookDto bookDto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + id));
+
+        bookRepository.findByIsbn(bookDto.isbn())
+                .ifPresent(bookWithSameIsbn -> {
+                    if (!bookWithSameIsbn.getId().equals(id)) {
+                        throw new ConflictException("Another book with ISBN " + bookDto.isbn() + " already exists.");
+                    }
+                });
 
         book.setTitle(bookDto.title());
         book.setAuthor(bookDto.author());
@@ -76,6 +80,17 @@ public class BookServiceImpl implements BookService {
                 .map(this::getBookDto);
     }
 
+
+    private static Book mapToEntity(BookDto bookDto) {
+        return Book.builder()
+                .title(bookDto.title())
+                .author(bookDto.author())
+                .isbn(bookDto.isbn())
+                .publicationYear(bookDto.publicationYear())
+                .totalCopies(bookDto.totalCopies())
+                .availableCopies(bookDto.availableCopies())
+                .build();
+    }
 
     private BookDto getBookDto(Book book) {
         return new BookDto(
