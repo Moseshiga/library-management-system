@@ -11,6 +11,9 @@ import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.BookLoanService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +30,15 @@ public class BookLoanServiceImpl implements BookLoanService {
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final BookLoanRepository bookLoanRepository;
+    private final MeterRegistry meterRegistry;
 
+    private Counter booksBorrowedCounter;
+    private Counter booksReturnedCounter;
+    @PostConstruct
+    public void initMetrics() {
+        booksBorrowedCounter = meterRegistry.counter("library.books.borrowed.total", "type", "business");
+        booksReturnedCounter = meterRegistry.counter("library.books.returned.total", "type", "business");
+    }
     @Override
     @Transactional
     public BookLoanDto borrowBook(Long bookId, Long readerId) {
@@ -51,6 +62,7 @@ public class BookLoanServiceImpl implements BookLoanService {
                 .build();
 
         BookLoan savedLoan = bookLoanRepository.save(bookLoan);
+        booksBorrowedCounter.increment();
         log.info("AUDIT: Book with ID {} successfully issued to reader id {}. Due date: {}",
                 bookId,
                 readerId,
@@ -75,6 +87,7 @@ public class BookLoanServiceImpl implements BookLoanService {
         Book book = bookLoan.getBook();
         book.setAvailableCopies(book.getAvailableCopies() + 1);
         bookRepository.save(book);
+        booksReturnedCounter.increment();
         log.info("AUDIT: Loan ID {} returned. Book availability updated.", loanId);
         return getBookLoanDto(bookLoan);
     }
