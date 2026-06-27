@@ -6,13 +6,12 @@ import com.moseshiga.librarymanagement.exeption.ConflictException;
 import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.service.BookService;
+import com.moseshiga.librarymanagement.specification.BookSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,13 +64,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> searchBooks(String title, String author) {
-        String searchTitle = (title != null) ? title : "";
-        String searchAuthor = (author != null) ? author : "";
-        return bookRepository.findByTitleContainingIgnoreCaseAndAuthorContainingIgnoreCase(searchTitle, searchAuthor)
-                .stream()
-                .map(this::getBookDto)
-                .collect(Collectors.toList());
+    public Page<BookDto> searchBooks(String title, String author, Integer year, Boolean available, Pageable pageable) {
+        Specification<Book> spec = Specification
+                .where(BookSpecifications.hasTitle(title))
+                .and(BookSpecifications.hasAuthor(author))
+                .and(BookSpecifications.hasPublicationYear(year))
+                .and(BookSpecifications.isAvailable(available));
+
+        return bookRepository.findAll(spec, pageable)
+                .map(this::getBookDto);
     }
 
     @Override

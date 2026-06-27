@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
@@ -58,9 +56,13 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BookDto>> searchBooks(
+    public ResponseEntity<Page<BookDto>> searchBooks(
             @RequestParam(required = false) String title,
-            @RequestParam(required = false) String author) {
-        return ResponseEntity.ok(bookService.searchBooks(title, author));
+            @RequestParam(required = false) String author,
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Boolean available,
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+
+        return ResponseEntity.ok(bookService.searchBooks(title, author, year, available, pageable));
     }
 }
