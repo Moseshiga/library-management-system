@@ -17,7 +17,10 @@ import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +44,11 @@ public class BookLoanServiceImpl implements BookLoanService {
     }
     @Override
     @Transactional
+    @Retryable(
+            retryFor = { CannotCreateTransactionException.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000, multiplier = 2.0)
+    )
     public BookLoanDto borrowBook(Long bookId, Long readerId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + bookId));

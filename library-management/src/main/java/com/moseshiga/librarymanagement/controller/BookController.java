@@ -4,6 +4,9 @@ import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.service.BookService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,9 +40,9 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDto>> getAllBooks() {
-        List<BookDto> books = bookService.getAllBooks();
-        return ResponseEntity.ok(books);
+    public ResponseEntity<Page<BookDto>> getAllBooks(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
+        return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
     @PutMapping("/{id}")

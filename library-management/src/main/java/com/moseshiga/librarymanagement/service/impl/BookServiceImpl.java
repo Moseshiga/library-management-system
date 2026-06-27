@@ -6,6 +6,8 @@ import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,13 +40,6 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAllBooks() {
-        return bookRepository.findAll().stream()
-                .map(this::getBookDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public BookDto updateBook(Long id, BookDto bookDto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + id));
@@ -73,6 +68,12 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(this::getBookDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<BookDto> getAllBooks(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(this::getBookDto);
     }
 
 
