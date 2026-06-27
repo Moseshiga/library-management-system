@@ -13,6 +13,7 @@ import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.BookLoanService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +21,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-
+@Slf4j
 public class BookLoanServiceImpl implements BookLoanService {
     public static final int STANDARD_LOAN_PERIOD_DAYS = 14;
     private final BookRepository bookRepository;
@@ -50,6 +51,10 @@ public class BookLoanServiceImpl implements BookLoanService {
                 .build();
 
         BookLoan savedLoan = bookLoanRepository.save(bookLoan);
+        log.info("AUDIT: Book with ID {} successfully issued to reader id {}. Due date: {}",
+                bookId,
+                readerId,
+                bookLoan.getDueDate());
         return getBookLoanDto(savedLoan);
     }
 
@@ -70,6 +75,7 @@ public class BookLoanServiceImpl implements BookLoanService {
         Book book = bookLoan.getBook();
         book.setAvailableCopies(book.getAvailableCopies() + 1);
         bookRepository.save(book);
+        log.info("AUDIT: Loan ID {} returned. Book availability updated.", loanId);
         return getBookLoanDto(bookLoan);
     }
 
