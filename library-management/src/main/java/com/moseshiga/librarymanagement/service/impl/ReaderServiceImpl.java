@@ -61,7 +61,9 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void deleteReader(Long id) {
-        getReaderById(id);
+        readerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + id));
+        readerRepository.deleteById(id);
     }
 
     private ReaderDto getReaderDto(Reader reader) {

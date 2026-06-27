@@ -13,4 +13,6 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
     List<BookLoan> findByReaderId(Long readerId);
 
     List<BookLoan> findByStatusAndDueDateBefore(LoanStatus status, LocalDate currentDate);
+
+    long countByStatus(LoanStatus status);
 }
