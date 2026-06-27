@@ -43,7 +43,7 @@ public class BookLoanServiceImpl implements BookLoanService {
                 .book(book)
                 .reader(reader)
                 .loanDate(LocalDate.now())
-                .dueDate(LocalDate.now().plusDays(STANDARD_LOAN_PERIOD_DAYS)) // Standard loan period is 14 days
+                .dueDate(LocalDate.now().plusDays(STANDARD_LOAN_PERIOD_DAYS))
                 .status(LoanStatus.ACTIVE)
                 .build();
 

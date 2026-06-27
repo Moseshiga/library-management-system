@@ -2,6 +2,7 @@ package com.moseshiga.librarymanagement.controller;
 
 import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.service.BookService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping
-    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto) {
+    public ResponseEntity<BookDto> createBook(@Valid @RequestBody BookDto bookDto) {
         BookDto createdBook = bookService.createBook(bookDto);
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
@@ -42,7 +43,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookDto> updateBook(@PathVariable Long id, @RequestBody BookDto bookDto) {
+    public ResponseEntity<BookDto> updateBook(@PathVariable Long id, @Valid @RequestBody BookDto bookDto) {
         BookDto updatedBook = bookService.updateBook(id, bookDto);
         return ResponseEntity.ok(updatedBook);
     }

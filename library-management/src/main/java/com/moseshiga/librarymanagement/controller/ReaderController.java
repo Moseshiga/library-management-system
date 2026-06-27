@@ -2,6 +2,7 @@ package com.moseshiga.librarymanagement.controller;
 
 import com.moseshiga.librarymanagement.dto.ReaderDto;
 import com.moseshiga.librarymanagement.service.ReaderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ public class ReaderController {
     private final ReaderService readerService;
 
     @PostMapping
-    public ResponseEntity<ReaderDto> createReader(@RequestBody ReaderDto readerDto) {
+    public ResponseEntity<ReaderDto> createReader(@Valid @RequestBody ReaderDto readerDto) {
         ReaderDto createdReader = readerService.createReader(readerDto);
         return new ResponseEntity<>(createdReader, HttpStatus.CREATED);
     }
@@ -41,7 +42,7 @@ public class ReaderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ReaderDto> updateReader(@PathVariable Long id, @RequestBody ReaderDto readerDto) {
+    public ResponseEntity<ReaderDto> updateReader(@PathVariable Long id, @Valid @RequestBody ReaderDto readerDto) {
         ReaderDto updatedReader = readerService.updateReader(id, readerDto);
         return ResponseEntity.ok(updatedReader);
     }
