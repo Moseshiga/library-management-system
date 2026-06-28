@@ -1,7 +1,9 @@
 package com.moseshiga.librarymanagement.controller;
 
 import com.moseshiga.librarymanagement.dto.BookLoanDto;
+import com.moseshiga.librarymanagement.dto.CreateLoanRequest;
 import com.moseshiga.librarymanagement.service.BookLoanService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -23,10 +25,9 @@ public class BookLoanController {
 
     @PostMapping("/borrow")
     public ResponseEntity<BookLoanDto> borrowBook(
-            @RequestParam Long bookId,
-            @RequestParam Long readerId
-    ) {
-        BookLoanDto loan = bookLoanService.borrowBook(bookId, readerId);
+            @Valid @RequestBody CreateLoanRequest createLoanRequest
+            ) {
+        BookLoanDto loan = bookLoanService.borrowBook(createLoanRequest);
         return new ResponseEntity<>(loan, HttpStatus.CREATED);
     }
 

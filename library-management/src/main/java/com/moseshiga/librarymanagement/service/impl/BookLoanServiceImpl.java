@@ -1,6 +1,7 @@
 package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.BookLoanDto;
+import com.moseshiga.librarymanagement.dto.CreateLoanRequest;
 import com.moseshiga.librarymanagement.entity.Book;
 import com.moseshiga.librarymanagement.entity.BookLoan;
 import com.moseshiga.librarymanagement.entity.LoanStatus;
@@ -29,7 +30,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BookLoanServiceImpl implements BookLoanService {
-    public static final int STANDARD_LOAN_PERIOD_DAYS = 14;
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final BookLoanRepository bookLoanRepository;
@@ -49,13 +49,13 @@ public class BookLoanServiceImpl implements BookLoanService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 1000, multiplier = 2.0)
     )
-    public BookLoanDto borrowBook(Long bookId, Long readerId) {
-        Book book = bookRepository.findById(bookId)
-                .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + bookId));
-        Reader reader = readerRepository.findById(readerId)
-                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + readerId));
+    public BookLoanDto borrowBook(CreateLoanRequest request) {
+        Book book = bookRepository.findById(request.bookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + request.bookId()));
+        Reader reader = readerRepository.findById(request.readerId())
+                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + request.readerId()));
         if (book.getAvailableCopies() == 0) {
-            throw new ConflictException("No available copies for book id: " + bookId);
+            throw new ConflictException("No available copies for book id: " + request.bookId());
         }
 
         book.setAvailableCopies(book.getAvailableCopies() - 1);
@@ -65,16 +65,16 @@ public class BookLoanServiceImpl implements BookLoanService {
                 .book(book)
                 .reader(reader)
                 .loanDate(LocalDate.now())
-                .dueDate(LocalDate.now().plusDays(STANDARD_LOAN_PERIOD_DAYS))
+                .dueDate(request.dueDate())
                 .status(LoanStatus.ACTIVE)
                 .build();
 
         BookLoan savedLoan = bookLoanRepository.save(bookLoan);
         booksBorrowedCounter.increment();
         log.info("AUDIT: Book with ID {} successfully issued to reader id {}. Due date: {}",
-                bookId,
-                readerId,
-                bookLoan.getDueDate());
+                savedLoan.getBook().getId(),
+                savedLoan.getReader().getId(),
+                savedLoan.getDueDate());
         return getBookLoanDto(savedLoan);
     }
 
