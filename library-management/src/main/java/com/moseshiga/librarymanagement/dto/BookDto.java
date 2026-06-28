@@ -21,6 +21,7 @@ public record BookDto(
         @NotNull(message = "Total copies count is required")
         @PositiveOrZero(message = "Total copies cannot be negative")
         Integer totalCopies,
+        @NotNull(message = "Available copies count is required")
         @PositiveOrZero(message = "Available copies cannot be negative")
         Integer availableCopies
 ) {

@@ -15,7 +15,8 @@ down:
 logs:
 	docker-compose logs -f library-app
 
-restart: down up
+restart:
+	down up
 
 clean:
 	mvn clean

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookLoanController {
     private final BookLoanService bookLoanService;
 
-    @PostMapping("/borrow")
+    @PostMapping
     public ResponseEntity<BookLoanDto> borrowBook(
             @Valid @RequestBody CreateLoanRequest createLoanRequest
             ) {
