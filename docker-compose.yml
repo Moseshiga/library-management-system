@@ -10,6 +10,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lib_user -d library_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  library-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: library_db
+      DB_USERNAME: lib_user
+      DB_PASSWORD: lib_password
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
 volumes:

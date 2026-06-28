@@ -57,11 +57,18 @@ public class ReaderServiceImpl implements ReaderService {
     public ReaderDto updateReader(Long id, ReaderDto readerDto) {
         Reader reader = readerRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + id));
+
+        readerRepository.findByEmail(readerDto.email())
+                .ifPresent(readerWithSameEmail -> {
+                    if (!readerWithSameEmail.getId().equals(id)) {
+                        throw new ConflictException("Email " + readerDto.email() + " already used");
+                    }
+                });
+
         reader.setFirstName(readerDto.firstName());
         reader.setLastName(readerDto.lastName());
         reader.setEmail(readerDto.email());
         reader.setPhone(readerDto.phone());
-        reader.setRegistrationDate(readerDto.registrationDate());
 
         Reader updatedReader = readerRepository.save(reader);
         return getReaderDto(updatedReader);
