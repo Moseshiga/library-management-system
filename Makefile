@@ -1,17 +1,21 @@
-.PHONY: up down logs clean
+.PHONY: build test up down logs clean restart
 
-# Поднять базу данных в фоновом режиме
+build:
+	mvn clean package -DskipTests
+
+test:
+	mvn test
+
 up:
-	docker-compose up -d
+	docker-compose up -d --build
 
-# Остановить базу данных
 down:
 	docker-compose down
 
-# Посмотреть логи базы данных
 logs:
-	docker-compose logs -f postgres
+	docker-compose logs -f library-app
 
-# Удалить контейнеры и очистить данные (volume)
+restart: down up
+
 clean:
-	docker-compose down -v
+	mvn clean
