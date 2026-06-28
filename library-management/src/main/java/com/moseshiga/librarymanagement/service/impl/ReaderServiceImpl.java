@@ -2,7 +2,9 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.ReaderDto;
 import com.moseshiga.librarymanagement.entity.Reader;
+import com.moseshiga.librarymanagement.exeption.ConflictException;
 import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
+import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.ReaderService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ReaderServiceImpl implements ReaderService {
     private final ReaderRepository readerRepository;
+    private final BookLoanRepository bookLoanRepository;
 
     @Override
     public ReaderDto createReader(ReaderDto readerDto) {
@@ -58,8 +61,12 @@ public class ReaderServiceImpl implements ReaderService {
 
     @Override
     public void deleteReader(Long id) {
-        readerRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + id));
+        if (!readerRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Reader not found with id: " + id);
+        }
+        if (bookLoanRepository.existsByReaderId(id)) {
+            throw new ConflictException("Cannot delete reader with ID " + id + ". This reader has a loan history in the system.");
+        }
         readerRepository.deleteById(id);
     }
 

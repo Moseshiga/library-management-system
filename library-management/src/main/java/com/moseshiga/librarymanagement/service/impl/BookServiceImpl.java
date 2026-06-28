@@ -4,6 +4,7 @@ import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.entity.Book;
 import com.moseshiga.librarymanagement.exeption.ConflictException;
 import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
+import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import com.moseshiga.librarymanagement.service.BookService;
 import com.moseshiga.librarymanagement.specification.BookSpecifications;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final BookLoanRepository bookLoanRepository;
 
     @Override
     public BookDto createBook(BookDto bookDto) {
@@ -60,7 +62,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void deleteBook(Long id) {
+        if (!bookRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Book not found with id: " + id);
+        }
+        if (bookLoanRepository.existsByBookId(id)) {
+            throw new ConflictException("Cannot delete book with ID " + id + ". It has an active or past loan history.");
+        }
         bookRepository.deleteById(id);
     }
 
