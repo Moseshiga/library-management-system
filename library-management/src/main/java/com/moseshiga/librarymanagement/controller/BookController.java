@@ -59,10 +59,18 @@ public class BookController {
     public ResponseEntity<Page<BookDto>> searchBooks(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) String author,
+            @RequestParam(required = false) String isbn,
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Boolean available,
             @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable) {
 
-        return ResponseEntity.ok(bookService.searchBooks(title, author, year, available, pageable));
+        return ResponseEntity.ok(bookService.searchBooks(
+                title,
+                author,
+                isbn,
+                year,
+                available,
+                pageable
+        ));
     }
 }

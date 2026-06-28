@@ -15,16 +15,17 @@ import com.moseshiga.librarymanagement.service.BookLoanService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -101,26 +102,22 @@ public class BookLoanServiceImpl implements BookLoanService {
     }
 
     @Override
-    public List<BookLoanDto> getAllLoans() {
-        return bookLoanRepository.findAll()
-                .stream()
-                .map(this::getBookLoanDto)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<BookLoanDto> getAllLoans(Pageable pageable) {
+        return bookLoanRepository.findAll(pageable)
+                .map(this::getBookLoanDto);
     }
 
     @Override
-    public List<BookLoanDto> getLoansByReaderId(Long readerId) {
-        return bookLoanRepository.findByReaderId(readerId).stream()
-                .map(this::getBookLoanDto)
-                .toList();
+    public Page<BookLoanDto> getLoansByReaderId(Long readerId, Pageable pageable) {
+        return bookLoanRepository.findByReaderId(readerId, pageable)
+                .map(this::getBookLoanDto);
     }
 
     @Override
-    public List<BookLoanDto> getOverdueLoans() {
-        return bookLoanRepository.findByStatusAndDueDateBefore(LoanStatus.ACTIVE, LocalDate.now())
-                .stream()
-                .map(this::getBookLoanDto)
-                .toList();
+    public Page<BookLoanDto> getOverdueLoans(Pageable pageable) {
+        return bookLoanRepository.findByStatusAndDueDateBefore(LoanStatus.ACTIVE, LocalDate.now(), pageable)
+                .map(this::getBookLoanDto);
     }
 
     private BookLoanDto getBookLoanDto(BookLoan bookLoan) {

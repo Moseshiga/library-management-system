@@ -9,6 +9,11 @@ public interface BookService {
     BookDto getBookById(Long id);
     BookDto updateBook(Long id, BookDto bookDto);
     void deleteBook(Long id);
-    Page<BookDto> searchBooks(String title, String author, Integer year, Boolean available, Pageable pageable);
+    Page<BookDto> searchBooks(String title,
+                              String author,
+                              String isbn,
+                              Integer year,
+                              Boolean available,
+                              Pageable pageable);
     Page<BookDto> getAllBooks(Pageable pageable);
 }

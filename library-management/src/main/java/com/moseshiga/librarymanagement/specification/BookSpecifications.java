@@ -35,4 +35,11 @@ public class BookSpecifications {
             }
         };
     }
+
+    public static Specification<Book> hasIsbn(String isbn) {
+        return (root, query, criteriaBuilder) -> {
+            if (isbn == null || isbn.isBlank()) return null;
+            return criteriaBuilder.equal(root.get("isbn"), isbn);
+        };
+    }
 }

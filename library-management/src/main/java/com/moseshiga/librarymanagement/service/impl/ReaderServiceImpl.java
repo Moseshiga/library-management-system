@@ -6,10 +6,9 @@ import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.ReaderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,11 +37,9 @@ public class ReaderServiceImpl implements ReaderService {
     }
 
     @Override
-    public List<ReaderDto> getAllReaders() {
-        return readerRepository.findAll()
-                .stream()
-                .map(this::getReaderDto)
-                .collect(Collectors.toList());
+    public Page<ReaderDto> getAllReaders(Pageable pageable) {
+        return readerRepository.findAll(pageable)
+                .map(this::getReaderDto);
     }
 
     @Override

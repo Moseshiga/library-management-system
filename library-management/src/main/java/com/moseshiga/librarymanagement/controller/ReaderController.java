@@ -4,6 +4,9 @@ import com.moseshiga.librarymanagement.dto.ReaderDto;
 import com.moseshiga.librarymanagement.service.ReaderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/readers")
@@ -36,8 +37,9 @@ public class ReaderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ReaderDto>> getAllReaders() {
-        List<ReaderDto> readers = readerService.getAllReaders();
+    public ResponseEntity<Page<ReaderDto>> getAllReaders(
+            @PageableDefault(page = 0, size = 10, sort = "lastName") Pageable pageable) {
+        Page<ReaderDto> readers = readerService.getAllReaders(pageable);
         return ResponseEntity.ok(readers);
     }
 

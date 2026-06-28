@@ -5,6 +5,9 @@ import com.moseshiga.librarymanagement.dto.CreateLoanRequest;
 import com.moseshiga.librarymanagement.service.BookLoanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/loans")
@@ -40,18 +41,24 @@ public class BookLoanController {
     }
 
     @GetMapping("/reader/{readerId}")
-    public ResponseEntity<List<BookLoanDto>> getReaderHistory(@PathVariable Long readerId) {
-        return ResponseEntity.ok(bookLoanService.getLoansByReaderId(readerId));
+    public ResponseEntity<Page<BookLoanDto>> getReaderHistory(
+            @PathVariable Long readerId,
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable
+    ) {
+        return ResponseEntity.ok(bookLoanService.getLoansByReaderId(readerId, pageable));
     }
 
     @GetMapping("/overdue")
-    public ResponseEntity<List<BookLoanDto>> getOverdueLoans() {
-        return ResponseEntity.ok(bookLoanService.getOverdueLoans());
+    public ResponseEntity<Page<BookLoanDto>> getOverdueLoans(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable
+    ) {
+        return ResponseEntity.ok(bookLoanService.getOverdueLoans(pageable));
     }
 
     @GetMapping
-    public ResponseEntity<List<BookLoanDto>> getAllLoans() {
-        List<BookLoanDto> allLoans = bookLoanService.getAllLoans();
-        return ResponseEntity.ok(allLoans);
+    public ResponseEntity<Page<BookLoanDto>> getAllLoans(
+            @PageableDefault(page = 0, size = 10, sort = "id") Pageable pageable
+    ) {
+        return ResponseEntity.ok(bookLoanService.getAllLoans(pageable));
     }
 }
