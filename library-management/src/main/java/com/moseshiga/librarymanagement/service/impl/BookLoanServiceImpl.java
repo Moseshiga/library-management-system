@@ -51,7 +51,7 @@ public class BookLoanServiceImpl implements BookLoanService {
             backoff = @Backoff(delay = 1000, multiplier = 2.0)
     )
     public BookLoanDto borrowBook(CreateLoanRequest request) {
-        Book book = bookRepository.findById(request.bookId())
+        Book book = bookRepository.findByIdForUpdate(request.bookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book is not found by id: " + request.bookId()));
         Reader reader = readerRepository.findById(request.readerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Reader is not found by id: " + request.readerId()));
