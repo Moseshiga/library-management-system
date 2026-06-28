@@ -27,6 +27,9 @@ public class BookServiceImpl implements BookService {
             throw new ConflictException("Book with ISBN " + bookDto.isbn() + " already exists in the catalog.");
         }
         Book book = mapToEntity(bookDto);
+
+        book.setAvailableCopies(bookDto.totalCopies());
+
         Book savedBook = bookRepository.save(book);
         return getBookDto(savedBook);
     }
@@ -49,6 +52,10 @@ public class BookServiceImpl implements BookService {
                         throw new ConflictException("Another book with ISBN " + bookDto.isbn() + " already exists.");
                     }
                 });
+
+        if (bookDto.availableCopies() > bookDto.totalCopies()) {
+            throw new ConflictException("Available copies (" + bookDto.availableCopies() + ") cannot exceed total copies (" + bookDto.totalCopies() + ").");
+        }
 
         book.setTitle(bookDto.title());
         book.setAuthor(bookDto.author());

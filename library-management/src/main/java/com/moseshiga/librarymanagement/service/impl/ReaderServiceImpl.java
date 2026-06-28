@@ -7,10 +7,13 @@ import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import com.moseshiga.librarymanagement.service.ReaderService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +22,11 @@ public class ReaderServiceImpl implements ReaderService {
     private final BookLoanRepository bookLoanRepository;
 
     @Override
+    @Transactional
     public ReaderDto createReader(ReaderDto readerDto) {
+        if (readerRepository.existsByEmail(readerDto.email())) {
+            throw new ConflictException("Email " + readerDto.email() + " already used");
+        }
         Reader reader = new Reader(
                 readerDto.id(),
                 readerDto.firstName(),
@@ -28,8 +35,9 @@ public class ReaderServiceImpl implements ReaderService {
                 readerDto.phone(),
                 readerDto.registrationDate()
                 );
-        readerRepository.save(reader);
-        return getReaderDto(reader);
+        reader.setRegistrationDate(LocalDate.now());
+        Reader savedReader = readerRepository.save(reader);
+        return getReaderDto(savedReader);
     }
 
     @Override
