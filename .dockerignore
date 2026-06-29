@@ -1,0 +1,30 @@
+# Git
+.git
+.gitignore
+
+# IDE files
+.idea
+.vscode
+*.iml
+
+# Maven build output
+**/target
+
+# Logs
+logs
+**/logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker files not needed inside image
+docker-compose.yml
+Makefile
+README.md
+
+# Local environment files
+.env
+*.env
+.env.*
