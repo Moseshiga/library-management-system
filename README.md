@@ -450,17 +450,3 @@ This is an educational project, so several production-level features are simplif
 * Docker requires Docker Desktop or Docker Engine to be installed locally
 * Makefile usage on Windows requires `make` to be installed separately
 * CSRF is disabled because the application is treated as a stateless REST API
-
-## Future Improvements
-
-Possible improvements:
-
-* Add database-backed users and roles
-* Add JWT authentication
-* Add full audit logging
-* Add more integration tests
-* Add Testcontainers for PostgreSQL integration testing
-* Add GitHub Actions CI pipeline
-* Add OpenAPI/Swagger documentation
-* Add soft delete for books and readers
-* Add advanced statistics dashboard
