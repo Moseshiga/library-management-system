@@ -1,4 +1,4 @@
-package com.moseshiga.librarymanagement.exeption;
+package com.moseshiga.librarymanagement.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {

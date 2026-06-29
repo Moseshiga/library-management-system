@@ -1,4 +1,4 @@
-package com.moseshiga.librarymanagement.exeption;
+package com.moseshiga.librarymanagement.exception;
 
 import java.time.LocalDateTime;
 import java.util.Map;

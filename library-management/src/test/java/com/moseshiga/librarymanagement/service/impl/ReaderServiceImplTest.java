@@ -2,8 +2,8 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.ReaderDto;
 import com.moseshiga.librarymanagement.entity.Reader;
-import com.moseshiga.librarymanagement.exeption.ConflictException;
-import com.moseshiga.librarymanagement.exeption.ResourceNotFoundException;
+import com.moseshiga.librarymanagement.exception.ConflictException;
+import com.moseshiga.librarymanagement.exception.ResourceNotFoundException;
 import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.ReaderRepository;
 import org.junit.jupiter.api.Test;

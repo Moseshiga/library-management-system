@@ -1,4 +1,4 @@
-package com.moseshiga.librarymanagement.exeption;
+package com.moseshiga.librarymanagement.exception;
 
 public class ConflictException extends RuntimeException {
     public ConflictException(String message) {

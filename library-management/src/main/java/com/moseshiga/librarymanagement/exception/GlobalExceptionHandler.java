@@ -1,4 +1,4 @@
-package com.moseshiga.librarymanagement.exeption;
+package com.moseshiga.librarymanagement.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

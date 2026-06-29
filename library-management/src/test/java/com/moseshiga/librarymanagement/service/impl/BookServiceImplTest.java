@@ -2,7 +2,7 @@ package com.moseshiga.librarymanagement.service.impl;
 
 import com.moseshiga.librarymanagement.dto.BookDto;
 import com.moseshiga.librarymanagement.entity.Book;
-import com.moseshiga.librarymanagement.exeption.ConflictException;
+import com.moseshiga.librarymanagement.exception.ConflictException;
 import com.moseshiga.librarymanagement.repository.BookLoanRepository;
 import com.moseshiga.librarymanagement.repository.BookRepository;
 import org.junit.jupiter.api.Test;
